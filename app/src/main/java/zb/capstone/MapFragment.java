@@ -3,6 +3,7 @@ package zb.capstone;
 
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -21,8 +22,10 @@ import com.google.android.gms.maps.model.MarkerOptions;
 public class MapFragment extends Fragment implements OnMapReadyCallback {
 
     GoogleMap map;
+    //private Callbacks zCallbacks;
 
     public MapFragment() {
+        Log.i("zach", "in public constructor");
         // Required empty public constructor
     }
 
@@ -32,15 +35,17 @@ public class MapFragment extends Fragment implements OnMapReadyCallback {
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         View v = inflater.inflate(R.layout.fragment_map, container, false);
-
-        SupportMapFragment mapFragment = (SupportMapFragment)getFragmentManager().findFragmentById(R.id.zmap);
+        Log.i("zach", "after view inflater");
+        SupportMapFragment mapFragment = (SupportMapFragment)this.getChildFragmentManager().findFragmentById(R.id.zmap);
+        Log.i("zach", "map fragment");
         mapFragment.getMapAsync(this);
-
+        Log.i("zach", "after null");
         return v;
     }
 
     @Override
     public void onMapReady(GoogleMap googleMap) {
+        Log.i("zach", "map ready");
         map = googleMap;
 
         LatLng depere = new LatLng(44.444117, -88.066470);

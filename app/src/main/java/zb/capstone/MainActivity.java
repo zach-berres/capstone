@@ -15,7 +15,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 
 public class MainActivity extends AppCompatActivity
-        implements NavigationView.OnNavigationItemSelectedListener {
+        implements NavigationView.OnNavigationItemSelectedListener /*MapFragment.Callbacks*/ {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -25,8 +25,10 @@ public class MainActivity extends AppCompatActivity
         setSupportActionBar(toolbar);
 
         MapFragment mapFragment = new MapFragment();
+        //FragmentManager manager = getFragmentManager();
         FragmentManager manager = getSupportFragmentManager();
         manager.beginTransaction().replace(R.id.mainLayout, mapFragment).commit();
+        //manager.beginTransaction().add(R.id.mainLayout, mapFragment).commit();
 
         FloatingActionButton fab = findViewById(R.id.fab_locate);
         fab.setOnClickListener(new View.OnClickListener() {
