@@ -35,11 +35,11 @@ public class MapFragment extends Fragment implements OnMapReadyCallback {
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         View v = inflater.inflate(R.layout.fragment_map, container, false);
-        Log.i("zach", "after view inflater");
+        //Log.i("zach", "after view inflater");
         SupportMapFragment mapFragment = (SupportMapFragment)this.getChildFragmentManager().findFragmentById(R.id.zmap);
-        Log.i("zach", "map fragment");
+        //Log.i("zach", "map fragment");
         mapFragment.getMapAsync(this);
-        Log.i("zach", "after null");
+        //Log.i("zach", "after null");
         return v;
     }
 
