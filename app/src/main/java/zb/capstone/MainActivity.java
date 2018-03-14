@@ -1,13 +1,18 @@
 package zb.capstone;
 
+import android.Manifest;
 import android.content.Intent;
 import android.content.IntentSender;
+import android.content.pm.PackageManager;
+import android.location.Location;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
+import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.FragmentManager;
+import android.support.v4.content.ContextCompat;
 import android.util.Log;
 import android.view.View;
 import android.support.design.widget.NavigationView;
@@ -21,9 +26,10 @@ import android.view.MenuItem;
 import android.widget.Toast;
 
 import com.google.android.gms.common.ConnectionResult;
-import com.google.android.gms.common.api.GoogleApi;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.location.LocationServices;
+import com.google.android.gms.location.FusedLocationProviderClient;
+import com.google.android.gms.location.FusedLocationProviderApi;
 
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener,
@@ -31,7 +37,10 @@ public class MainActivity extends AppCompatActivity
         GoogleApiClient.OnConnectionFailedListener
 {
     private final static int REQUEST_CODE = 100;
+    private static final int MY_PERMISSIONS_REQUEST_ACCESS_FINE_LOCATION = 101;
     private GoogleApiClient gac;//this is our api client
+    private Location myloc;
+    private FusedLocationProviderClient gpsflc;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -39,6 +48,7 @@ public class MainActivity extends AppCompatActivity
         setContentView(R.layout.activity_main);
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
+        gpsflc = LocationServices.getFusedLocationProviderClient(this);
 
         MapFragment mapFragment = new MapFragment();
         FragmentManager manager = getSupportFragmentManager();
@@ -76,6 +86,28 @@ public class MainActivity extends AppCompatActivity
         super.onStart();
         if(gac != null)
             gac.connect(); //attempt to establish connection. if success, check onConnected
+    }
+
+    public void displayLocation()
+    {
+        if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION)
+                != PackageManager.PERMISSION_GRANTED)
+        {
+            // Permission is not granted
+            ActivityCompat.requestPermissions(this,
+                    new String[]{Manifest.permission.ACCESS_FINE_LOCATION},
+                    MY_PERMISSIONS_REQUEST_ACCESS_FINE_LOCATION);
+        }
+        FusedLocationProviderApi flpa = LocationServices.FusedLocationApi;
+        myloc = flpa.getLastLocation(gac);
+        if(myloc != null)
+        {
+            double latitude = myloc.getLatitude();
+            double longitude = myloc.getLongitude();
+            Log.i("gps", "latitude = " + latitude + "; longitude = " + longitude );
+        }
+        else
+            Log.i("gps", "error locating device");
     }
 
     @Override
@@ -138,6 +170,7 @@ public class MainActivity extends AppCompatActivity
     @Override
     public void onConnected(@Nullable Bundle bundle) {
         Log.i("gps", "connected");
+        displayLocation();
     }
 
     @Override
