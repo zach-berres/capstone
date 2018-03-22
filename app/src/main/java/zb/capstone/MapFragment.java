@@ -22,10 +22,12 @@ import com.google.android.gms.maps.model.MarkerOptions;
 public class MapFragment extends Fragment implements OnMapReadyCallback {
 
     GoogleMap map;
+    String fromMainLat;
+    String fromMainLng;
     //private Callbacks zCallbacks;
 
     public MapFragment() {
-        Log.i("zach", "in public constructor");
+        //Log.i("zach", "in public constructor");
         // Required empty public constructor
     }
 
@@ -35,24 +37,25 @@ public class MapFragment extends Fragment implements OnMapReadyCallback {
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         View v = inflater.inflate(R.layout.fragment_map, container, false);
-        //Log.i("zach", "after view inflater");
         SupportMapFragment mapFragment = (SupportMapFragment)this.getChildFragmentManager().findFragmentById(R.id.zmap);
-        //Log.i("zach", "map fragment");
         mapFragment.getMapAsync(this);
-        //Log.i("zach", "after null");
+        fromMainLat = getArguments().getString("mylat");
+        fromMainLng = getArguments().getString("mylng");
         return v;
     }
 
     @Override
     public void onMapReady(GoogleMap googleMap) {
-        Log.i("zach", "map ready");
+        //Log.i("zach", "map ready");
         map = googleMap;
 
-        LatLng depere = new LatLng(44.444117, -88.066470);
+        //LatLng depere = new LatLng(44.444117, -88.066470);
+        Log.i("gps", "newlatitude = " + fromMainLat + "; newlongitude = " + fromMainLng );
+        LatLng myloc = new LatLng(Double.parseDouble(fromMainLat), Double.parseDouble(fromMainLng));
         MarkerOptions option = new MarkerOptions();
-        option.position(depere).title("DePere");
+        option.position(myloc).title("DePere");
         map.addMarker(option);
-        map.moveCamera(CameraUpdateFactory.newLatLngZoom(depere, 10.0f));
+        map.moveCamera(CameraUpdateFactory.newLatLngZoom(myloc, 15.0f));
 
     }
 }

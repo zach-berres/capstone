@@ -41,6 +41,8 @@ public class MainActivity extends AppCompatActivity
     private GoogleApiClient gac;//this is our api client
     private Location myloc;
     private FusedLocationProviderClient gpsflc;
+    private double mylat;
+    private double mylng;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -49,10 +51,6 @@ public class MainActivity extends AppCompatActivity
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         gpsflc = LocationServices.getFusedLocationProviderClient(this);
-
-        MapFragment mapFragment = new MapFragment();
-        FragmentManager manager = getSupportFragmentManager();
-        manager.beginTransaction().replace(R.id.mainLayout, mapFragment).commit();
 
         FloatingActionButton fab = findViewById(R.id.fab_locate);
         fab.setOnClickListener(new View.OnClickListener() {
@@ -78,6 +76,7 @@ public class MainActivity extends AppCompatActivity
         gpsbldr.addOnConnectionFailedListener(this);
         gpsbldr.addApi(LocationServices.API);
         gac = gpsbldr.build();
+
     }
 
     @Override
@@ -85,7 +84,16 @@ public class MainActivity extends AppCompatActivity
     {
         super.onStart();
         if(gac != null)
+        {
             gac.connect(); //attempt to establish connection. if success, check onConnected
+            Bundle mycoordsbundle = new Bundle();
+            mycoordsbundle.putString("mylat", String.valueOf(mylat));
+            mycoordsbundle.putString("mylng", String.valueOf(mylng));
+            MapFragment mapFragment = new MapFragment();
+            mapFragment.setArguments(mycoordsbundle);
+            FragmentManager manager = getSupportFragmentManager();
+            manager.beginTransaction().replace(R.id.mainLayout, mapFragment).commit();
+        }
     }
 
     public void displayLocation()
@@ -102,9 +110,9 @@ public class MainActivity extends AppCompatActivity
         myloc = flpa.getLastLocation(gac);
         if(myloc != null)
         {
-            double latitude = myloc.getLatitude();
-            double longitude = myloc.getLongitude();
-            Log.i("gps", "latitude = " + latitude + "; longitude = " + longitude );
+            mylat = myloc.getLatitude();
+            mylng = myloc.getLongitude();
+            Log.i("gps", "latitude = " + mylat + "; longitude = " + mylng );
         }
         else
             Log.i("gps", "error locating device");
