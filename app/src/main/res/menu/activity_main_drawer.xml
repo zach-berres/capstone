@@ -4,14 +4,15 @@
     tools:showIn="navigation_view">
 
     <group android:checkableBehavior="single">
-        <item
+        <!--<item
             android:id="@+id/nav_locate"
             android:icon="@drawable/ic_my_location_black_24dp"
             android:title="Refresh Location" />
+            -->
         <item
             android:id="@+id/nav_groups"
             android:icon="@drawable/ic_group_black_24dp"
-            android:title="Groups" />
+            android:title="Friends" />
         <item
             android:id="@+id/nav_share"
             android:icon="@drawable/ic_person_pin_circle_black_24dp"

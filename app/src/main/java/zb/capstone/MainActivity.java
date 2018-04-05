@@ -31,6 +31,13 @@ import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.FusedLocationProviderApi;
 
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.io.OutputStreamWriter;
+
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener,
         GoogleApiClient.ConnectionCallbacks,
@@ -178,7 +185,8 @@ public class MainActivity extends AppCompatActivity
     @Override
     public void onConnected(@Nullable Bundle bundle) {
         Log.i("gps", "connected");
-        displayLocation();
+        displayLocation(); //uses getLastLocation to get gps coordinates
+        //writeToFile(String.valueOf(0), String.valueOf(mylat), String.valueOf(mylng));
     }
 
     @Override
@@ -209,6 +217,37 @@ public class MainActivity extends AppCompatActivity
         if(requestCode == REQUEST_CODE && resultCode == RESULT_OK)
         {
             gac.connect(); //problem from onConnectionFailed resolved (GooglePlayServices?), try to connect again
+        }
+    }
+
+    private void writeToFile(String usrId, String latText, String lngTxt)
+    {
+        //try
+        {
+            //FileOutputStream fout = new FileOutputStream("");
+            //byte stream[]=appendText.getBytes();
+            //fout.write(stream);
+            //fout.close();
+            //String appendText = usrId + "/n" + latText + "/n" +lngTxt;
+            //String appendText = "test";
+            //File outfile = new File("output.txt");
+
+            //if(!outfile.exists())
+            //{
+            //    outfile.createNewFile();
+            //}
+
+            //FileWriter fw = new FileWriter(outfile, true);
+            //BufferedWriter bw = new BufferedWriter(fw);
+            //bw.write(appendText);
+            //bw.close();
+
+        }
+        //catch (IOException e)
+        {
+            //Log.i("file", "unable to write to file");
+            //e.printStackTrace();
+            //Toast.makeText(this, "Problem writing to file", Toast.LENGTH_LONG).show();
         }
     }
 }

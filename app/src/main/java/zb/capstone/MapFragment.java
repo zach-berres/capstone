@@ -55,7 +55,7 @@ public class MapFragment extends Fragment implements OnMapReadyCallback {
         MarkerOptions option = new MarkerOptions();
         option.position(myloc).title("DePere");
         map.addMarker(option);
-        map.moveCamera(CameraUpdateFactory.newLatLngZoom(myloc, 15.0f));
+        map.moveCamera(CameraUpdateFactory.newLatLngZoom(myloc, 18.0f));
 
     }
 }
