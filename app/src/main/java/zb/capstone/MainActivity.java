@@ -72,17 +72,22 @@ public class MainActivity extends AppCompatActivity
         super.onPause();
         FusedLocationProviderApi flpa = LocationServices.FusedLocationApi;
         flpa.removeLocationUpdates(gac, this);
+        Log.i("onPause", "in on pause");
     }
 
     //somehow get location updates going again
     @Override
     protected void onResume() {
+
         super.onResume();
+        Log.i("onresume", "in on resume");
+        //call onConnect
     }
 
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        Log.i("oncreate", "in on create");
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         Toolbar toolbar = findViewById(R.id.toolbar);
