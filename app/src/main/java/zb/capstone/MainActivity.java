@@ -30,6 +30,8 @@ import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.FusedLocationProviderApi;
+import com.google.android.gms.location.LocationListener;
+import com.google.android.gms.location.LocationRequest;
 
 import java.io.BufferedWriter;
 import java.io.File;
@@ -41,7 +43,8 @@ import java.io.OutputStreamWriter;
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener,
         GoogleApiClient.ConnectionCallbacks,
-        GoogleApiClient.OnConnectionFailedListener
+        GoogleApiClient.OnConnectionFailedListener,
+        LocationListener
 {
     private final static int REQUEST_CODE = 100;
     private static final int MY_PERMISSIONS_REQUEST_ACCESS_FINE_LOCATION = 101;
@@ -50,6 +53,24 @@ public class MainActivity extends AppCompatActivity
     private FusedLocationProviderClient gpsflc;
     private double mylat;
     private double mylng;
+
+    //Everytime we exceed the minimum threshold for distance travelled, our function will be called
+    public void onLocationChanged(Location location )
+    {
+        float accuracy = location.getAccuracy();
+        Log.w("location_changed","accuracy " + accuracy);
+        mylat = location.getLatitude();
+        mylng = location.getLongitude();
+        Log.i("location_changed", "latitude = " + mylat + "; longitude = " + mylng );
+        makeBundle();
+    }
+
+    protected void onPause()
+    {
+        super.onPause();
+        FusedLocationProviderApi flpa = LocationServices.FusedLocationApi;
+        flpa.removeLocationUpdates(gac, this);
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -93,19 +114,12 @@ public class MainActivity extends AppCompatActivity
         if(gac != null)
         {
             gac.connect(); //attempt to establish connection. if success, check onConnected
-            Bundle mycoordsbundle = new Bundle();
-            mycoordsbundle.putString("mylat", String.valueOf(mylat));
-            mycoordsbundle.putString("mylng", String.valueOf(mylng));
-            MapFragment mapFragment = new MapFragment();
-            mapFragment.setArguments(mycoordsbundle);
-            FragmentManager manager = getSupportFragmentManager();
-            manager.beginTransaction().replace(R.id.mainLayout, mapFragment).commit();
         }
     }
 
-    public void displayLocation()
+    public void makeBundle()
     {
-        if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION)
+        /*if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION)
                 != PackageManager.PERMISSION_GRANTED)
         {
             // Permission is not granted
@@ -114,7 +128,7 @@ public class MainActivity extends AppCompatActivity
                     MY_PERMISSIONS_REQUEST_ACCESS_FINE_LOCATION);
         }
         FusedLocationProviderApi flpa = LocationServices.FusedLocationApi;
-        myloc = flpa.getLastLocation(gac);
+        //myloc = flpa.getLastLocation(gac);
         if(myloc != null)
         {
             mylat = myloc.getLatitude();
@@ -123,6 +137,14 @@ public class MainActivity extends AppCompatActivity
         }
         else
             Log.i("gps", "error locating device");
+            */
+        Bundle mycoordsbundle = new Bundle();
+        mycoordsbundle.putString("mylat", String.valueOf(mylat));
+        mycoordsbundle.putString("mylng", String.valueOf(mylng));
+        MapFragment mapFragment = new MapFragment();
+        mapFragment.setArguments(mycoordsbundle);
+        FragmentManager manager = getSupportFragmentManager();
+        manager.beginTransaction().replace(R.id.mainLayout, mapFragment).commit();
     }
 
     @Override
@@ -183,7 +205,28 @@ public class MainActivity extends AppCompatActivity
     @Override
     public void onConnected(@Nullable Bundle bundle) {
         Log.i("gps", "connected");
-        displayLocation(); //uses getLastLocation to get gps coordinates
+        FusedLocationProviderApi flpa = LocationServices.FusedLocationApi;
+        LocationRequest request = new LocationRequest();
+        request.setInterval(30000); //30 seconds, arbitrarily chosen but should allow for significant distance travelled between requests.
+        request.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY); //highest available accuracy
+        request.setSmallestDisplacement(20);//20meters for testing, minimum distance travelled before checking update, even if more than 30 seconds
+
+        //again, request and obtain permission if not first had
+        if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION)
+                != PackageManager.PERMISSION_GRANTED)
+        {
+            // Permission is not granted
+            ActivityCompat.requestPermissions(this,
+                    new String[]{Manifest.permission.ACCESS_FINE_LOCATION},
+                    MY_PERMISSIONS_REQUEST_ACCESS_FINE_LOCATION);
+
+        }
+        if(gac.isConnected())//in case connection was lost when app was in background
+            flpa.requestLocationUpdates(gac, request, this);
+        else
+            gac.connect();
+
+        //displayLocation(); //uses getLastLocation to get gps coordinates
         //writeToFile(String.valueOf(0), String.valueOf(mylat), String.valueOf(mylng));
     }
 

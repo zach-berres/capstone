@@ -53,7 +53,7 @@ public class MapFragment extends Fragment implements OnMapReadyCallback {
         Log.i("gps", "newlatitude = " + fromMainLat + "; newlongitude = " + fromMainLng );
         LatLng myloc = new LatLng(Double.parseDouble(fromMainLat), Double.parseDouble(fromMainLng));
         MarkerOptions option = new MarkerOptions();
-        option.position(myloc).title("DePere");
+        option.position(myloc).title("mylocation");
         map.addMarker(option);
         map.moveCamera(CameraUpdateFactory.newLatLngZoom(myloc, 18.0f));
 
