@@ -1,6 +1,8 @@
 package zb.capstone;
 
 import android.Manifest;
+import android.accounts.Account;
+import android.accounts.AccountManager;
 import android.content.Intent;
 import android.content.IntentSender;
 import android.content.pm.PackageManager;
@@ -72,6 +74,13 @@ public class MainActivity extends AppCompatActivity
         flpa.removeLocationUpdates(gac, this);
     }
 
+    //somehow get location updates going again
+    @Override
+    protected void onResume() {
+        super.onResume();
+    }
+
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -84,8 +93,7 @@ public class MainActivity extends AppCompatActivity
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-                        .setAction("Action", null).show();
+                onConnected(Bundle.EMPTY);
             }
         });
 
@@ -98,13 +106,31 @@ public class MainActivity extends AppCompatActivity
         NavigationView navigationView = findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
 
+        //Moved this to a separate function, keep things neat and tidy in here
+        GooglePlayServiceBuilder();
+        GetAccount();
+
+    }
+
+    //uses AccountManager API to grab user's Google Account data
+    protected void GetAccount()
+    {
+        AccountManager am = AccountManager.get(this);
+        Account[] accounts = am.getAccountsByType("com.google");
+        //dialog if multiple accounts
+            //choose account
+            //parse account name as string for username
+            //call User constructor?
+    }
+
+    protected void GooglePlayServiceBuilder()
+    {
         //Create Google API Client builder
         GoogleApiClient.Builder gpsbldr = new GoogleApiClient.Builder(this);
         gpsbldr.addConnectionCallbacks(this);
         gpsbldr.addOnConnectionFailedListener(this);
         gpsbldr.addApi(LocationServices.API);
         gac = gpsbldr.build();
-
     }
 
     @Override
@@ -119,25 +145,6 @@ public class MainActivity extends AppCompatActivity
 
     public void makeBundle()
     {
-        /*if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION)
-                != PackageManager.PERMISSION_GRANTED)
-        {
-            // Permission is not granted
-            ActivityCompat.requestPermissions(this,
-                    new String[]{Manifest.permission.ACCESS_FINE_LOCATION},
-                    MY_PERMISSIONS_REQUEST_ACCESS_FINE_LOCATION);
-        }
-        FusedLocationProviderApi flpa = LocationServices.FusedLocationApi;
-        //myloc = flpa.getLastLocation(gac);
-        if(myloc != null)
-        {
-            mylat = myloc.getLatitude();
-            mylng = myloc.getLongitude();
-            Log.i("gps", "latitude = " + mylat + "; longitude = " + mylng );
-        }
-        else
-            Log.i("gps", "error locating device");
-            */
         Bundle mycoordsbundle = new Bundle();
         mycoordsbundle.putString("mylat", String.valueOf(mylat));
         mycoordsbundle.putString("mylng", String.valueOf(mylng));
@@ -261,6 +268,7 @@ public class MainActivity extends AppCompatActivity
         }
     }
 
+    //This will be reutilized as the SendDataToServer function, still researching/testing on other machine
     private void writeToFile(String usrId, String latText, String lngTxt)
     {
         //try
