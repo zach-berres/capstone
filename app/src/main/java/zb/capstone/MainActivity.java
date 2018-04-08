@@ -27,6 +27,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.Toast;
 
+import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.location.LocationServices;
@@ -55,39 +56,11 @@ public class MainActivity extends AppCompatActivity
     private FusedLocationProviderClient gpsflc;
     private double mylat;
     private double mylng;
-
-    //Everytime we exceed the minimum threshold for distance travelled, our function will be called
-    public void onLocationChanged(Location location )
-    {
-        float accuracy = location.getAccuracy();
-        Log.w("location_changed","accuracy " + accuracy);
-        mylat = location.getLatitude();
-        mylng = location.getLongitude();
-        Log.i("location_changed", "latitude = " + mylat + "; longitude = " + mylng );
-        makeBundle();
-    }
-
-    protected void onPause()
-    {
-        super.onPause();
-        FusedLocationProviderApi flpa = LocationServices.FusedLocationApi;
-        flpa.removeLocationUpdates(gac, this);
-        Log.i("onPause", "in on pause");
-    }
-
-    //somehow get location updates going again
-    @Override
-    protected void onResume() {
-
-        super.onResume();
-        Log.i("onresume", "in on resume");
-        //call onConnect
-    }
-
+    private Account myaccount;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        Log.i("oncreate", "in on create");
+        Log.i("whereami", "in on create");
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         Toolbar toolbar = findViewById(R.id.toolbar);
@@ -114,18 +87,82 @@ public class MainActivity extends AppCompatActivity
         //Moved this to a separate function, keep things neat and tidy in here
         GooglePlayServiceBuilder();
         GetAccount();
+    }
 
+    @Override
+    protected void onStart()
+    {
+        Log.i("whereami", "in on start");
+        super.onStart();
+        if(gac != null)
+        {
+            gac.connect(); //attempt to establish connection. if success, check onConnected
+        }
+    }
+
+    //somehow get location updates going again
+    @Override
+    protected void onResume()
+    {
+        Log.i("whereami", "in on resume");
+        super.onResume();
+        onConnected(Bundle.EMPTY);
+    }
+
+    protected void onPause()
+    {
+        Log.i("whereami", "in on pause");
+        super.onPause();
+        FusedLocationProviderApi flpa = LocationServices.FusedLocationApi;
+        flpa.removeLocationUpdates(gac, this);
+    }
+
+    protected void onStop()
+    {
+        Log.i("whereami", "in on stop");
+        super.onStop();
+    }
+
+    protected void onRestart()
+    {
+        Log.i("whereami", "in on restart");
+        super.onRestart();
+    }
+
+    protected void onDestroy()
+    {
+        Log.i("whereami", "in on destroy");
+        super.onDestroy();
+    }
+
+    //Everytime we exceed the minimum threshold for distance travelled, our function will be called
+    public void onLocationChanged(Location location )
+    {
+        float accuracy = location.getAccuracy();
+        Log.i("location_changed","accuracy " + accuracy);
+        mylat = location.getLatitude();
+        mylng = location.getLongitude();
+        Log.i("location_changed", "latitude = " + mylat + "; longitude = " + mylng );
+        makeBundle();
     }
 
     //uses AccountManager API to grab user's Google Account data
     protected void GetAccount()
     {
-        AccountManager am = AccountManager.get(this);
-        Account[] accounts = am.getAccountsByType("com.google");
+        Log.i("whereami", "in get account");
+        //AccountManager am = AccountManager.get(this);
+        //Account[] accounts = am.getAccountsByType("com.google");
         //dialog if multiple accounts
             //choose account
             //parse account name as string for username
             //call User constructor?
+        //Log.i("whataccount", Integer.toString(accounts.length));
+
+        ////////////////////////////Google Sign-In////////////////////////////////////////////////////
+        // Configure sign-in to request the user's ID, email address, and basic
+        // profile. ID and basic profile are included in DEFAULT_SIGN_IN.
+        GoogleSignInOptions gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN).requestEmail().build();
+        //Google Sign In Client
     }
 
     protected void GooglePlayServiceBuilder()
@@ -136,16 +173,6 @@ public class MainActivity extends AppCompatActivity
         gpsbldr.addOnConnectionFailedListener(this);
         gpsbldr.addApi(LocationServices.API);
         gac = gpsbldr.build();
-    }
-
-    @Override
-    protected void onStart()
-    {
-        super.onStart();
-        if(gac != null)
-        {
-            gac.connect(); //attempt to establish connection. if success, check onConnected
-        }
     }
 
     public void makeBundle()
@@ -177,17 +204,16 @@ public class MainActivity extends AppCompatActivity
     }
 
     @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
+    public boolean onOptionsItemSelected(MenuItem item)
+    {
         // Handle action bar item clicks here. The action bar will
         // automatically handle clicks on the Home/Up button, so long
         // as you specify a parent activity in AndroidManifest.xml.
         int id = item.getItemId();
-
         //noinspection SimplifiableIfStatement
         if (id == R.id.action_settings) {
             return true;
         }
-
         return super.onOptionsItemSelected(item);
     }
 
