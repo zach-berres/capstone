@@ -324,7 +324,7 @@ public class MainActivity extends AppCompatActivity
         @Override
         protected void onPostExecute(String line) {
             super.onPostExecute(line);
-            if(!Objects.equals(line, "error"))
+            if(!Objects.equals(line, "error receiving data"))
             {
                 String result = line;
                 Log.i("testconnect", result);
