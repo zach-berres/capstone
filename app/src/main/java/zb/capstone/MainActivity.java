@@ -2,16 +2,15 @@ package zb.capstone;
 
 import android.Manifest;
 import android.accounts.Account;
-import android.accounts.AccountManager;
 import android.content.Intent;
 import android.content.IntentSender;
 import android.content.pm.PackageManager;
 import android.location.Location;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.Snackbar;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.content.ContextCompat;
@@ -36,21 +35,17 @@ import com.google.android.gms.location.FusedLocationProviderApi;
 import com.google.android.gms.location.LocationListener;
 import com.google.android.gms.location.LocationRequest;
 
-import java.io.BufferedWriter;
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.FileWriter;
-import java.io.IOException;
-import java.io.OutputStreamWriter;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener,
         GoogleApiClient.ConnectionCallbacks,
         GoogleApiClient.OnConnectionFailedListener,
-        LocationListener
-{
+        LocationListener {
     private final static int REQUEST_CODE = 100;
     private static final int MY_PERMISSIONS_REQUEST_ACCESS_FINE_LOCATION = 101;
+    private String URL_UPDATE_LOCATIONS = "compsci02.snc.edu/home/berrzg/public_html/capstone/update_locations.php";
     private GoogleApiClient gac;//this is our api client
     private Location myloc;
     private FusedLocationProviderClient gpsflc;
@@ -90,72 +85,63 @@ public class MainActivity extends AppCompatActivity
     }
 
     @Override
-    protected void onStart()
-    {
+    protected void onStart() {
         Log.i("whereami", "in on start");
         super.onStart();
-        if(gac != null)
-        {
+        if (gac != null) {
             gac.connect(); //attempt to establish connection. if success, check onConnected
         }
     }
 
     //somehow get location updates going again
     @Override
-    protected void onResume()
-    {
+    protected void onResume() {
         Log.i("whereami", "in on resume");
         super.onResume();
         onConnected(Bundle.EMPTY);
     }
 
-    protected void onPause()
-    {
+    protected void onPause() {
         Log.i("whereami", "in on pause");
         super.onPause();
         FusedLocationProviderApi flpa = LocationServices.FusedLocationApi;
         flpa.removeLocationUpdates(gac, this);
     }
 
-    protected void onStop()
-    {
+    protected void onStop() {
         Log.i("whereami", "in on stop");
         super.onStop();
     }
 
-    protected void onRestart()
-    {
+    protected void onRestart() {
         Log.i("whereami", "in on restart");
         super.onRestart();
     }
 
-    protected void onDestroy()
-    {
+    protected void onDestroy() {
         Log.i("whereami", "in on destroy");
         super.onDestroy();
     }
 
     //Everytime we exceed the minimum threshold for distance travelled, our function will be called
-    public void onLocationChanged(Location location )
-    {
+    public void onLocationChanged(Location location) {
         float accuracy = location.getAccuracy();
-        Log.i("location_changed","accuracy " + accuracy);
+        Log.i("location_changed", "accuracy " + accuracy);
         mylat = location.getLatitude();
         mylng = location.getLongitude();
-        Log.i("location_changed", "latitude = " + mylat + "; longitude = " + mylng );
+        Log.i("location_changed", "latitude = " + mylat + "; longitude = " + mylng);
         makeBundle();
     }
 
     //uses AccountManager API to grab user's Google Account data
-    protected void GetAccount()
-    {
+    protected void GetAccount() {
         Log.i("whereami", "in get account");
         //AccountManager am = AccountManager.get(this);
         //Account[] accounts = am.getAccountsByType("com.google");
         //dialog if multiple accounts
-            //choose account
-            //parse account name as string for username
-            //call User constructor?
+        //choose account
+        //parse account name as string for username
+        //call User constructor?
         //Log.i("whataccount", Integer.toString(accounts.length));
 
         ////////////////////////////Google Sign-In////////////////////////////////////////////////////
@@ -165,8 +151,7 @@ public class MainActivity extends AppCompatActivity
         //Google Sign In Client
     }
 
-    protected void GooglePlayServiceBuilder()
-    {
+    protected void GooglePlayServiceBuilder() {
         //Create Google API Client builder
         GoogleApiClient.Builder gpsbldr = new GoogleApiClient.Builder(this);
         gpsbldr.addConnectionCallbacks(this);
@@ -175,8 +160,7 @@ public class MainActivity extends AppCompatActivity
         gac = gpsbldr.build();
     }
 
-    public void makeBundle()
-    {
+    public void makeBundle() {
         Bundle mycoordsbundle = new Bundle();
         mycoordsbundle.putString("mylat", String.valueOf(mylat));
         mycoordsbundle.putString("mylng", String.valueOf(mylng));
@@ -204,8 +188,7 @@ public class MainActivity extends AppCompatActivity
     }
 
     @Override
-    public boolean onOptionsItemSelected(MenuItem item)
-    {
+    public boolean onOptionsItemSelected(MenuItem item) {
         // Handle action bar item clicks here. The action bar will
         // automatically handle clicks on the Home/Up button, so long
         // as you specify a parent activity in AndroidManifest.xml.
@@ -251,20 +234,18 @@ public class MainActivity extends AppCompatActivity
 
         //again, request and obtain permission if not first had
         if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION)
-                != PackageManager.PERMISSION_GRANTED)
-        {
+                != PackageManager.PERMISSION_GRANTED) {
             // Permission is not granted
             ActivityCompat.requestPermissions(this,
                     new String[]{Manifest.permission.ACCESS_FINE_LOCATION},
                     MY_PERMISSIONS_REQUEST_ACCESS_FINE_LOCATION);
 
         }
-        if(gac.isConnected())//in case connection was lost when app was in background
+        if (gac.isConnected())//in case connection was lost when app was in background
             flpa.requestLocationUpdates(gac, request, this);
         else
             gac.connect();
 
-        //displayLocation(); //uses getLastLocation to get gps coordinates
         //writeToFile(String.valueOf(0), String.valueOf(mylat), String.valueOf(mylng));
     }
 
@@ -276,13 +257,10 @@ public class MainActivity extends AppCompatActivity
     @Override
     public void onConnectionFailed(@NonNull ConnectionResult result) {
         Log.i("gps", "connection failed");
-        if (result.hasResolution())
-        {
-            try
-            {
+        if (result.hasResolution()) {
+            try {
                 result.startResolutionForResult(this, REQUEST_CODE);
-            } catch (IntentSender.SendIntentException e)
-            {
+            } catch (IntentSender.SendIntentException e) {
                 Log.i("gps", "problem with google play services");
                 Toast.makeText(this, "Problem with Google Play services, exiting", Toast.LENGTH_LONG).show();
                 finish();
@@ -291,17 +269,14 @@ public class MainActivity extends AppCompatActivity
     }
 
     @Override
-    public void onActivityResult(int requestCode, int resultCode, Intent data)
-    {
-        if(requestCode == REQUEST_CODE && resultCode == RESULT_OK)
-        {
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        if (requestCode == REQUEST_CODE && resultCode == RESULT_OK) {
             gac.connect(); //problem from onConnectionFailed resolved (GooglePlayServices?), try to connect again
         }
     }
 
     //This will be reutilized as the SendDataToServer function, still researching/testing on other machine
-    private void writeToFile(String usrId, String latText, String lngTxt)
-    {
+    private void writeToFile(String usrId, String latText, String lngTxt) {
         //try
         {
             //FileOutputStream fout = new FileOutputStream("");
@@ -328,6 +303,57 @@ public class MainActivity extends AppCompatActivity
             //Log.i("file", "unable to write to file");
             //e.printStackTrace();
             //Toast.makeText(this, "Problem writing to file", Toast.LENGTH_LONG).show();
+        }
+    }
+
+    private class addNewLocation extends AsyncTask<String, Void, Void> {
+        @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
+
+        }
+
+        @Override
+        protected Void doInBackground(String... arg) {
+
+            String userid = arg[0];
+            String username = arg[1];
+            String lat = arg[2];
+            String lng = arg[3];
+
+            //prepare parameters to pass through POST
+
+            //create service handler using serviceHandler class(HAVE TO MAKE)
+
+            //package service handler info( URL, call, parameters) into string, which we will turn into JSON object below
+
+            //if(json != null) {  //we have a json object, now check to see if any internal errors
+            try {
+                JSONObject jsonObj = new JSONObject(/*PLACEHOLDER, REPLACE WITH STRING*/);
+                boolean error = jsonObj.getBoolean("error");
+                // checking for error node in json
+                if (!error) {
+                    // new category created successfully
+                    Log.i("JSON", "success " + jsonObj.getString("message"));
+                } else {
+                    Log.i("JSON", "error " + jsonObj.getString("message"));
+                }
+
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+            // }//end if json != null
+            // else {
+            //  Log.i("JSON", "JSON data error, null");
+            //}
+
+            return null;
+
+        }
+
+        @Override
+        protected void onPostExecute(Void result) {
+            super.onPostExecute(result);
         }
     }
 }
