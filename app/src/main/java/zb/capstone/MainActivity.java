@@ -41,6 +41,7 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
+import java.net.ProtocolException;
 import java.net.URL;
 import java.util.Objects;
 
@@ -76,6 +77,7 @@ public class MainActivity extends AppCompatActivity
             @Override
             public void onClick(View view) {
                 onConnected(Bundle.EMPTY);
+                new sendData().execute(Double.toString(mylat), Double.toString(mylng));
                 //new addNewLocation().execute(ADD PARAMETERS); //starts async thread params: userid, username, lat, lng
             }
         });
@@ -143,6 +145,8 @@ public class MainActivity extends AppCompatActivity
         mylng = location.getLongitude();
         Log.i("location_changed", "latitude = " + mylat + "; longitude = " + mylng);
         makeBundle();
+        //send coordinates to php file to handle
+        //new sendData().execute(Double.toString(mylat), Double.toString(mylng));
     }
 
     //uses AccountManager API to grab user's Google Account data
@@ -159,7 +163,7 @@ public class MainActivity extends AppCompatActivity
         ////////////////////////////Google Sign-In////////////////////////////////////////////////////
         // Configure sign-in to request the user's ID, email address, and basic
         // profile. ID and basic profile are included in DEFAULT_SIGN_IN.
-        GoogleSignInOptions gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN).requestEmail().build();
+        //GoogleSignInOptions gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN).requestEmail().build();
         //Google Sign In Client
     }
 
@@ -329,6 +333,42 @@ public class MainActivity extends AppCompatActivity
                 String result = line;
                 Log.i("testconnect", result);
             }
+        }
+    }
+
+    public class sendData extends AsyncTask<String, String, String>
+    {
+
+        @Override
+        protected String doInBackground(String... params) {
+            HttpURLConnection connection = null;
+            //String php = URL_UPDATE_LOCATIONS + "?lat="+params[0]+"&lng="+params[1];
+            String php = "http://compsci02.snc.edu/cs460/2018/berrzg/project_files/update_locations.php?lat="+params[0]+"&lng="+params[1];
+            Log.i("testSend", php);
+            try{
+                URL url = new URL(php);
+                connection = (HttpURLConnection) url.openConnection();
+                connection.setRequestMethod("GET");
+
+                InputStream is = connection.getInputStream();
+                return "successfully sent and wrote data";
+            } catch (ProtocolException e) {
+                e.printStackTrace();
+            } catch (MalformedURLException e) {
+                e.printStackTrace();
+            } catch (IOException e) {
+                e.printStackTrace();
+            } finally{
+                if(connection != null)
+                    connection.disconnect();
+            }
+            return "error sending data to php";
+        }
+
+        @Override
+        protected  void onPostExecute(String s)
+        {
+            super.onPostExecute(s);
         }
     }
 }
