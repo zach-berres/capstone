@@ -35,9 +35,6 @@ import com.google.android.gms.location.FusedLocationProviderApi;
 import com.google.android.gms.location.LocationListener;
 import com.google.android.gms.location.LocationRequest;
 
-import org.json.JSONException;
-import org.json.JSONObject;
-
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener,
         GoogleApiClient.ConnectionCallbacks,
@@ -46,12 +43,14 @@ public class MainActivity extends AppCompatActivity
     private final static int REQUEST_CODE = 100;
     private static final int MY_PERMISSIONS_REQUEST_ACCESS_FINE_LOCATION = 101;
     private String URL_UPDATE_LOCATIONS = "compsci02.snc.edu/home/berrzg/public_html/capstone/update_locations.php";
+    private String URL_TEST = "https://www.google.com/";
     private GoogleApiClient gac;//this is our api client
     private Location myloc;
     private FusedLocationProviderClient gpsflc;
     private double mylat;
     private double mylng;
     private Account myaccount;
+    private HttpConnect httpConnect;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -67,6 +66,8 @@ public class MainActivity extends AppCompatActivity
             @Override
             public void onClick(View view) {
                 onConnected(Bundle.EMPTY);
+                //new addNewLocation().execute(ADD PARAMETERS); //starts async thread params: userid, username, lat, lng
+                new testTask().execute(URL_TEST);
             }
         });
 
@@ -275,38 +276,26 @@ public class MainActivity extends AppCompatActivity
         }
     }
 
-    //This will be reutilized as the SendDataToServer function, still researching/testing on other machine
-    private void writeToFile(String usrId, String latText, String lngTxt) {
-        //try
-        {
-            //FileOutputStream fout = new FileOutputStream("");
-            //byte stream[]=appendText.getBytes();
-            //fout.write(stream);
-            //fout.close();
-            //String appendText = usrId + "/n" + latText + "/n" +lngTxt;
-            //String appendText = "test";
-            //File outfile = new File("output.txt");
+    private class testTask extends AsyncTask<String, Void, Void>
+    {
 
-            //if(!outfile.exists())
-            //{
-            //    outfile.createNewFile();
-            //}
-
-            //FileWriter fw = new FileWriter(outfile, true);
-            //BufferedWriter bw = new BufferedWriter(fw);
-            //bw.write(appendText);
-            //bw.close();
-
-        }
-        //catch (IOException e)
-        {
-            //Log.i("file", "unable to write to file");
-            //e.printStackTrace();
-            //Toast.makeText(this, "Problem writing to file", Toast.LENGTH_LONG).show();
+        @Override
+        protected Void doInBackground(String... urls) {
+            httpConnect = new HttpConnect();
+            try{
+                httpConnect.connect(urls[0]);
+                String htmldata = httpConnect.accessHtmlData();
+                Log.i("testTask", htmldata);
+            }
+            catch (Exception e)
+            {
+                Log.i("testTask", "Error connecting to url");
+            }
+            return null;
         }
     }
 
-    private class addNewLocation extends AsyncTask<String, Void, Void> {
+    /*private class addNewLocation extends AsyncTask<String, Void, Void> {
         @Override
         protected void onPreExecute() {
             super.onPreExecute();
@@ -329,7 +318,7 @@ public class MainActivity extends AppCompatActivity
 
             //if(json != null) {  //we have a json object, now check to see if any internal errors
             try {
-                JSONObject jsonObj = new JSONObject(/*PLACEHOLDER, REPLACE WITH STRING*/);
+                JSONObject jsonObj = new JSONObject(*//*PLACEHOLDER, REPLACE WITH STRING*//*);
                 boolean error = jsonObj.getBoolean("error");
                 // checking for error node in json
                 if (!error) {
@@ -355,5 +344,5 @@ public class MainActivity extends AppCompatActivity
         protected void onPostExecute(Void result) {
             super.onPostExecute(result);
         }
-    }
+    }*/
 }
