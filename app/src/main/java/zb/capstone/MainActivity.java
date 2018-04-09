@@ -35,6 +35,15 @@ import com.google.android.gms.location.FusedLocationProviderApi;
 import com.google.android.gms.location.LocationListener;
 import com.google.android.gms.location.LocationRequest;
 
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.net.HttpURLConnection;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.util.Objects;
+
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener,
         GoogleApiClient.ConnectionCallbacks,
@@ -42,15 +51,15 @@ public class MainActivity extends AppCompatActivity
         LocationListener {
     private final static int REQUEST_CODE = 100;
     private static final int MY_PERMISSIONS_REQUEST_ACCESS_FINE_LOCATION = 101;
-    private String URL_UPDATE_LOCATIONS = "compsci02.snc.edu/home/berrzg/public_html/capstone/update_locations.php";
-    private String URL_TEST = "https://www.google.com/";
+    private String URL_UPDATE_LOCATIONS = "compsci02.snc.edu/cs460/2018/berrzg/project_files/update_locations.php";
+    private String URL_TEST = "http://compsci02.snc.edu/cs460/2018/berrzg/project_files/test.txt";
+    private String URL_G = "https://www.google.com";
     private GoogleApiClient gac;//this is our api client
     private Location myloc;
     private FusedLocationProviderClient gpsflc;
     private double mylat;
     private double mylng;
     private Account myaccount;
-    private HttpConnect httpConnect;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -61,16 +70,17 @@ public class MainActivity extends AppCompatActivity
         setSupportActionBar(toolbar);
         gpsflc = LocationServices.getFusedLocationProviderClient(this);
 
+        //Update Location Button
         FloatingActionButton fab = findViewById(R.id.fab_locate);
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 onConnected(Bundle.EMPTY);
                 //new addNewLocation().execute(ADD PARAMETERS); //starts async thread params: userid, username, lat, lng
-                new testTask().execute(URL_TEST);
             }
         });
 
+        //Activity Drawer: contains menu items
         DrawerLayout drawer = findViewById(R.id.drawer_layout);
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
                 this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
@@ -82,7 +92,8 @@ public class MainActivity extends AppCompatActivity
 
         //Moved this to a separate function, keep things neat and tidy in here
         GooglePlayServiceBuilder();
-        GetAccount();
+        new receiveData().execute(URL_TEST);
+        //GetAccount();
     }
 
     @Override
@@ -246,8 +257,6 @@ public class MainActivity extends AppCompatActivity
             flpa.requestLocationUpdates(gac, request, this);
         else
             gac.connect();
-
-        //writeToFile(String.valueOf(0), String.valueOf(mylat), String.valueOf(mylng));
     }
 
     @Override
@@ -276,73 +285,50 @@ public class MainActivity extends AppCompatActivity
         }
     }
 
-    private class testTask extends AsyncTask<String, Void, Void>
+    public class receiveData extends AsyncTask<String, String, String>
     {
 
         @Override
-        protected Void doInBackground(String... urls) {
-            httpConnect = new HttpConnect();
+        protected String doInBackground(String... params) {
+            HttpURLConnection connection = null;
+            BufferedReader br = null;
+
             try{
-                httpConnect.connect(urls[0]);
-                String htmldata = httpConnect.accessHtmlData();
-                Log.i("testTask", htmldata);
+                URL url = new URL(params[0]);
+                connection = (HttpURLConnection) url.openConnection();
+                connection.connect();
+
+                InputStream is = connection.getInputStream();
+                br = new BufferedReader(new InputStreamReader(is));
+
+                String line = "";
+                while((line = br.readLine()) != null)
+                    return line;
+            } catch (MalformedURLException e) {
+                e.printStackTrace();
+            } catch (IOException e) {
+                e.printStackTrace();
+            } finally{
+                if (connection != null)
+                    connection.disconnect();
+                try{
+                    if (br != null)
+                        br.close();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
             }
-            catch (Exception e)
+            return "error receiving data";
+        }
+
+        @Override
+        protected void onPostExecute(String line) {
+            super.onPostExecute(line);
+            if(!Objects.equals(line, "error"))
             {
-                Log.i("testTask", "Error connecting to url");
+                String result = line;
+                Log.i("testconnect", result);
             }
-            return null;
         }
     }
-
-    /*private class addNewLocation extends AsyncTask<String, Void, Void> {
-        @Override
-        protected void onPreExecute() {
-            super.onPreExecute();
-
-        }
-
-        @Override
-        protected Void doInBackground(String... arg) {
-
-            String userid = arg[0];
-            String username = arg[1];
-            String lat = arg[2];
-            String lng = arg[3];
-
-            //prepare parameters to pass through POST
-
-            //create service handler using serviceHandler class(HAVE TO MAKE)
-
-            //package service handler info( URL, call, parameters) into string, which we will turn into JSON object below
-
-            //if(json != null) {  //we have a json object, now check to see if any internal errors
-            try {
-                JSONObject jsonObj = new JSONObject(*//*PLACEHOLDER, REPLACE WITH STRING*//*);
-                boolean error = jsonObj.getBoolean("error");
-                // checking for error node in json
-                if (!error) {
-                    // new category created successfully
-                    Log.i("JSON", "success " + jsonObj.getString("message"));
-                } else {
-                    Log.i("JSON", "error " + jsonObj.getString("message"));
-                }
-
-            } catch (JSONException e) {
-                e.printStackTrace();
-            }
-            // }//end if json != null
-            // else {
-            //  Log.i("JSON", "JSON data error, null");
-            //}
-
-            return null;
-
-        }
-
-        @Override
-        protected void onPostExecute(Void result) {
-            super.onPostExecute(result);
-        }
-    }*/
 }
