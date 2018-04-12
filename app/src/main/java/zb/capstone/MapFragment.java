@@ -51,6 +51,7 @@ public class MapFragment extends Fragment implements OnMapReadyCallback {
 
         //LatLng depere = new LatLng(44.444117, -88.066470);
         Log.i("gps", "newlatitude = " + fromMainLat + "; newlongitude = " + fromMainLng );
+
         LatLng myloc = new LatLng(Double.parseDouble(fromMainLat), Double.parseDouble(fromMainLng));
         MarkerOptions option = new MarkerOptions();
         option.position(myloc).title("mylocation");

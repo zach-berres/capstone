@@ -34,6 +34,9 @@ import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.FusedLocationProviderApi;
 import com.google.android.gms.location.LocationListener;
 import com.google.android.gms.location.LocationRequest;
+import com.google.android.gms.maps.model.BitmapDescriptorFactory;
+import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.MarkerOptions;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -75,10 +78,10 @@ public class MainActivity extends AppCompatActivity
         FloatingActionButton fab = findViewById(R.id.fab_locate);
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onClick(View view) {
+            public void onClick(View view)
+            {
                 onConnected(Bundle.EMPTY);
-                new sendData().execute(Double.toString(mylat), Double.toString(mylng));
-                //new addNewLocation().execute(ADD PARAMETERS); //starts async thread params: userid, username, lat, lng
+                new sendData().execute(Double.toString(mylat), Double.toString(mylng), "berrzg", "0");
             }
         });
 
@@ -95,7 +98,6 @@ public class MainActivity extends AppCompatActivity
         //Moved this to a separate function, keep things neat and tidy in here
         GooglePlayServiceBuilder();
         new receiveData().execute(URL_TEST);
-        //GetAccount();
     }
 
     @Override
@@ -145,26 +147,7 @@ public class MainActivity extends AppCompatActivity
         mylng = location.getLongitude();
         Log.i("location_changed", "latitude = " + mylat + "; longitude = " + mylng);
         makeBundle();
-        //send coordinates to php file to handle
         //new sendData().execute(Double.toString(mylat), Double.toString(mylng));
-    }
-
-    //uses AccountManager API to grab user's Google Account data
-    protected void GetAccount() {
-        Log.i("whereami", "in get account");
-        //AccountManager am = AccountManager.get(this);
-        //Account[] accounts = am.getAccountsByType("com.google");
-        //dialog if multiple accounts
-        //choose account
-        //parse account name as string for username
-        //call User constructor?
-        //Log.i("whataccount", Integer.toString(accounts.length));
-
-        ////////////////////////////Google Sign-In////////////////////////////////////////////////////
-        // Configure sign-in to request the user's ID, email address, and basic
-        // profile. ID and basic profile are included in DEFAULT_SIGN_IN.
-        //GoogleSignInOptions gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN).requestEmail().build();
-        //Google Sign In Client
     }
 
     protected void GooglePlayServiceBuilder() {
@@ -332,6 +315,27 @@ public class MainActivity extends AppCompatActivity
             {
                 String result = line;
                 Log.i("testconnect", result);
+                String location[] = line.split(";");
+
+                if(Objects.equals(location[3], "0"))
+                {
+                    double currentLatitude = Double.parseDouble(location[1]);
+                    double currentLongitude = Double.parseDouble(location[2]);
+
+                    Log.i("testConnect", currentLatitude + " | " + currentLongitude);
+
+                    /*LatLng latLng = new LatLng(currentLatitude, currentLongitude);
+
+                    MarkerOptions options = new MarkerOptions()
+                            .position(latLng)
+                            .title(location[0])
+                            .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_BLUE));*/
+                }
+                else
+                {
+                    Toast.makeText(MainActivity.this, "User has turned off their location.", Toast.LENGTH_LONG).show();
+                    Log.i("testconnect", "User location not retrieved; they are incognito");
+                }
             }
         }
     }
@@ -343,7 +347,7 @@ public class MainActivity extends AppCompatActivity
         protected String doInBackground(String... params) {
             HttpURLConnection connection = null;
             //String php = URL_UPDATE_LOCATIONS + "?lat="+params[0]+"&lng="+params[1];
-            String php = "http://compsci02.snc.edu/cs460/2018/berrzg/project_files/update_locations.php?lat="+params[0]+"&lng="+params[1];
+            String php = "http://compsci02.snc.edu/cs460/2018/berrzg/project_files/update_locations.php?lat="+params[0]+"&lng="+params[1]+"&userid="+params[2]+"&ncog="+params[3];
             Log.i("testSend", php);
             try{
                 URL url = new URL(php);
