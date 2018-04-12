@@ -14,5 +14,52 @@ public class User {
     public int                  incognito; //essentially a bool: 1 = True, 0 = False. Is the user incognito(unable to be tracked)?
     //Location or set of Lat/Lng doubles
 
+    public User()
+    {
+        customname = "";
+        userid = "";
+        //friends = null;
+        incognito = 0;
+    }
+
+    public User(String c, String u, int i)
+    {
+        customname = c;
+        userid = u;
+        incognito = i;
+    }
+
+    public String getUserName()
+    {
+        return customname;
+    }
+
+    public String getUserId()
+    {
+        return userid;
+    }
+
+    public int getNcog()
+    {
+        return incognito;
+    }
+
+    public void setUserName(String c)
+    {
+        customname = c;
+    }
+
+    public void setUserId(String u)
+    {
+        userid = u;
+    }
+
+    public void setNcog(int i)
+    {
+        if(i >= 0 && i <= 1)
+            incognito = i;
+        else
+            incognito = 1;
+    }
 }
 
