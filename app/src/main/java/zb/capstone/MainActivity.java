@@ -24,6 +24,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.Switch;
 import android.widget.Toast;
 
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
@@ -75,6 +76,8 @@ public class MainActivity extends AppCompatActivity
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         Toolbar toolbar = findViewById(R.id.toolbar);
+        //Incognito Switch
+        Switch simpleSwitch = (Switch) findViewById(R.id.toggleswitch);
         setSupportActionBar(toolbar);
         gpsflc = LocationServices.getFusedLocationProviderClient(this);
 
