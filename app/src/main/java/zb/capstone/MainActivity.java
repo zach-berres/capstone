@@ -42,6 +42,7 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.lang.reflect.Array;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.ProtocolException;
@@ -64,6 +65,9 @@ public class MainActivity extends AppCompatActivity
     private double mylat;
     private double mylng;
     private Account myaccount;
+    private String coords[] = new String[10];
+    private String username;
+    private int incognito = 0;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -98,6 +102,7 @@ public class MainActivity extends AppCompatActivity
         //Moved this to a separate function, keep things neat and tidy in here
         GooglePlayServiceBuilder();
         new receiveData().execute(URL_TEST);
+        username = "berrzg";
     }
 
     @Override
@@ -145,6 +150,8 @@ public class MainActivity extends AppCompatActivity
         Log.i("location_changed", "accuracy " + accuracy);
         mylat = location.getLatitude();
         mylng = location.getLongitude();
+        coords[0] = username + ";" + String.valueOf(mylat) + ";" + String.valueOf(mylng) + ";" + incognito;
+        Log.i("location_changed", coords[0]);
         Log.i("location_changed", "latitude = " + mylat + "; longitude = " + mylng);
         makeBundle();
         //new sendData().execute(Double.toString(mylat), Double.toString(mylng));
@@ -161,10 +168,22 @@ public class MainActivity extends AppCompatActivity
 
     public void makeBundle() {
         Bundle mycoordsbundle = new Bundle();
+        //use stringArray
         mycoordsbundle.putString("mylat", String.valueOf(mylat));
         mycoordsbundle.putString("mylng", String.valueOf(mylng));
         MapFragment mapFragment = new MapFragment();
         mapFragment.setArguments(mycoordsbundle);
+        FragmentManager manager = getSupportFragmentManager();
+        manager.beginTransaction().replace(R.id.mainLayout, mapFragment).commit();
+    }
+
+    public void makeBundle2()
+    {
+        Bundle sab = new Bundle();
+        //coords[0] = "berrzg;44.4455376;-88.0664596;0";
+        sab.putStringArray("coords", coords);
+        MapFragment mapFragment = new MapFragment();
+        mapFragment.setArguments(sab);
         FragmentManager manager = getSupportFragmentManager();
         manager.beginTransaction().replace(R.id.mainLayout, mapFragment).commit();
     }
@@ -227,9 +246,9 @@ public class MainActivity extends AppCompatActivity
         Log.i("gps", "connected");
         FusedLocationProviderApi flpa = LocationServices.FusedLocationApi;
         LocationRequest request = new LocationRequest();
-        request.setInterval(30000); //30 seconds, arbitrarily chosen but should allow for significant distance travelled between requests.
+        //request.setInterval(30000); //30 seconds, arbitrarily chosen but should allow for significant distance travelled between requests.
         request.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY); //highest available accuracy
-        request.setSmallestDisplacement(20);//20meters for testing, minimum distance travelled before checking update, even if more than 30 seconds
+        request.setSmallestDisplacement(2);//2 meters for testing, minimum distance travelled before checking update, even if more than 30 seconds
 
         //again, request and obtain permission if not first had
         if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION)
