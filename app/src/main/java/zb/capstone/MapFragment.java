@@ -14,7 +14,9 @@ import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
+import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 
 import java.io.BufferedReader;
@@ -60,7 +62,6 @@ public class MapFragment extends Fragment implements OnMapReadyCallback {
         user = userCoords[0].split(";");
         fromMainLat = user[1];
         fromMainLng = user[2];
-        //splitUserData(userCoords);
         //new receiveData().execute(URL_TEST);
         return v;
     }
@@ -74,24 +75,42 @@ public class MapFragment extends Fragment implements OnMapReadyCallback {
         Log.i("gps", "newlatitude = " + fromMainLat + "; newlongitude = " + fromMainLng );
 
         LatLng myloc = new LatLng(Double.parseDouble(fromMainLat), Double.parseDouble(fromMainLng));
-        MarkerOptions option = new MarkerOptions();
-        option.position(myloc).title("mylocation");
+        MarkerOptions option = new MarkerOptions()
+                .position(myloc)
+                .title("My Location");
         map.addMarker(option);
-        map.moveCamera(CameraUpdateFactory.newLatLngZoom(myloc, 18.0f));
+        map.moveCamera(CameraUpdateFactory.newLatLng(myloc));
+        map.animateCamera(CameraUpdateFactory.zoomTo((15)));
+        splitUserData(userCoords);
 
     }
 
-    public String splitUserData(String[] sa)
+    public void splitUserData(String[] sa)
     {
         String user[];
-        int i = 0;
+        int i = 1;
         while(sa[i] != null)
         {
             user = sa[i].split(";");
+            if(Objects.equals(user[3], "0"))//they are NOT incognito
+            {
+                double currentLatitude = Double.parseDouble(user[1]);
+                double currentLongitude = Double.parseDouble(user[2]);
 
+                Log.i("testconnectfrag", currentLatitude + " | " + currentLongitude);
+
+                    LatLng latLng = new LatLng(currentLatitude, currentLongitude);
+
+                    MarkerOptions options = new MarkerOptions()
+                            .position(latLng)
+                            .title(user[0])
+                            .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_BLUE));
+                map.addMarker(options);
+            }
+            i++;
         }
 
-        return null;
+        return;
     }
 
     public class receiveData extends AsyncTask<String, String, String>

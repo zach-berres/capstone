@@ -313,6 +313,7 @@ public class MainActivity extends AppCompatActivity
                 {
                     coords[i] = line;
                     Log.i("friends", coords[i]);
+                    i++;
                     return line;
                 }
             } catch (MalformedURLException e) {
@@ -338,7 +339,7 @@ public class MainActivity extends AppCompatActivity
             if(!Objects.equals(line, "error receiving data"))
             {
                 String result = line;
-                Log.i("testconnect", result);
+                Log.i("onpost", result);
                 String location[] = line.split(";");
 
                 if(Objects.equals(location[3], "0"))
