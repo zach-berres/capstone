@@ -152,8 +152,8 @@ public class MainActivity extends AppCompatActivity
         mylng = location.getLongitude();
         coords[0] = username + ";" + String.valueOf(mylat) + ";" + String.valueOf(mylng) + ";" + incognito;
         Log.i("location_changed", coords[0]);
-        Log.i("location_changed", "latitude = " + mylat + "; longitude = " + mylng);
-        makeBundle();
+        //Log.i("location_changed", "latitude = " + mylat + "; longitude = " + mylng);
+        makeBundle2();
         //new sendData().execute(Double.toString(mylat), Double.toString(mylng));
     }
 
@@ -307,9 +307,14 @@ public class MainActivity extends AppCompatActivity
                 InputStream is = connection.getInputStream();
                 br = new BufferedReader(new InputStreamReader(is));
 
+                int i = 1;//coords[0] is main user, so start at 1 for friends
                 String line = "";
                 while((line = br.readLine()) != null)
+                {
+                    coords[i] = line;
+                    Log.i("friends", coords[i]);
                     return line;
+                }
             } catch (MalformedURLException e) {
                 e.printStackTrace();
             } catch (IOException e) {
@@ -338,10 +343,10 @@ public class MainActivity extends AppCompatActivity
 
                 if(Objects.equals(location[3], "0"))
                 {
-                    double currentLatitude = Double.parseDouble(location[1]);
-                    double currentLongitude = Double.parseDouble(location[2]);
+                    //double currentLatitude = Double.parseDouble(location[1]);
+                    //double currentLongitude = Double.parseDouble(location[2]);
 
-                    Log.i("testConnect", currentLatitude + " | " + currentLongitude);
+                    //Log.i("testconnectmain", currentLatitude + " | " + currentLongitude);
 
                     /*LatLng latLng = new LatLng(currentLatitude, currentLongitude);
 

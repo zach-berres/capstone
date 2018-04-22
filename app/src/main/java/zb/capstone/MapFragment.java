@@ -1,12 +1,14 @@
 package zb.capstone;
 
 
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Toast;
 
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
@@ -14,6 +16,15 @@ import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
+
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.net.HttpURLConnection;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.util.Objects;
 
 
 /**
@@ -24,6 +35,8 @@ public class MapFragment extends Fragment implements OnMapReadyCallback {
     GoogleMap map;
     String fromMainLat;
     String fromMainLng;
+    String userCoords[] = new String[10]; //do I need to define a size here or can i initialize as just userCoords[]?
+    private String URL_TEST = "http://compsci02.snc.edu/cs460/2018/berrzg/project_files/test.txt";
     //private Callbacks zCallbacks;
 
     public MapFragment() {
@@ -39,8 +52,16 @@ public class MapFragment extends Fragment implements OnMapReadyCallback {
         View v = inflater.inflate(R.layout.fragment_map, container, false);
         SupportMapFragment mapFragment = (SupportMapFragment)this.getChildFragmentManager().findFragmentById(R.id.zmap);
         mapFragment.getMapAsync(this);
-        fromMainLat = getArguments().getString("mylat");
-        fromMainLng = getArguments().getString("mylng");
+        //fromMainLat = getArguments().getString("mylat");
+        //fromMainLng = getArguments().getString("mylng");
+        userCoords = getArguments().getStringArray("coords");
+        Log.i("coordsfrommain", userCoords[0]);
+        String user[];
+        user = userCoords[0].split(";");
+        fromMainLat = user[1];
+        fromMainLng = user[2];
+        //splitUserData(userCoords);
+        //new receiveData().execute(URL_TEST);
         return v;
     }
 
@@ -58,5 +79,86 @@ public class MapFragment extends Fragment implements OnMapReadyCallback {
         map.addMarker(option);
         map.moveCamera(CameraUpdateFactory.newLatLngZoom(myloc, 18.0f));
 
+    }
+
+    public String splitUserData(String[] sa)
+    {
+        String user[];
+        int i = 0;
+        while(sa[i] != null)
+        {
+            user = sa[i].split(";");
+
+        }
+
+        return null;
+    }
+
+    public class receiveData extends AsyncTask<String, String, String>
+    {
+
+        @Override
+        protected String doInBackground(String... params) {
+            HttpURLConnection connection = null;
+            BufferedReader br = null;
+
+            try{
+                URL url = new URL(params[0]);
+                connection = (HttpURLConnection) url.openConnection();
+                connection.connect();
+
+                InputStream is = connection.getInputStream();
+                br = new BufferedReader(new InputStreamReader(is));
+
+                String line = "";
+                while((line = br.readLine()) != null)
+                    return line;
+            } catch (MalformedURLException e) {
+                e.printStackTrace();
+            } catch (IOException e) {
+                e.printStackTrace();
+            } finally{
+                if (connection != null)
+                    connection.disconnect();
+                try{
+                    if (br != null)
+                        br.close();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+            return "error receiving data";
+        }
+
+        @Override
+        protected void onPostExecute(String line) {
+            super.onPostExecute(line);
+            if(!Objects.equals(line, "error receiving data"))
+            {
+                String result = line;
+                Log.i("testconnect", result);
+                String location[] = line.split(";");
+
+                if(Objects.equals(location[3], "0"))
+                {
+                    double currentLatitude = Double.parseDouble(location[1]);
+                    double currentLongitude = Double.parseDouble(location[2]);
+
+                    //Log.i("testconnectmain", currentLatitude + " | " + currentLongitude);
+
+                    /*LatLng latLng = new LatLng(currentLatitude, currentLongitude);
+
+                    MarkerOptions options = new MarkerOptions()
+                            .position(latLng)
+                            .title(location[0])
+                            .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_BLUE));*/
+                }
+                else
+                {
+                    //Toast.makeText(MainActivity.this, "User has turned off their location.", Toast.LENGTH_LONG).show();
+                    Log.i("testconnect", "User location not retrieved; they are incognito");
+                }
+            }
+        }
     }
 }
