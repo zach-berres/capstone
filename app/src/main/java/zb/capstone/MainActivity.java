@@ -314,8 +314,9 @@ public class MainActivity extends AppCompatActivity
                     coords[i] = line;
                     Log.i("friends", coords[i]);
                     i++;
-                    return line;
                 }
+                return line;
+
             } catch (MalformedURLException e) {
                 e.printStackTrace();
             } catch (IOException e) {
@@ -336,31 +337,9 @@ public class MainActivity extends AppCompatActivity
         @Override
         protected void onPostExecute(String line) {
             super.onPostExecute(line);
-            if(!Objects.equals(line, "error receiving data"))
+            if(Objects.equals(line, "error receiving data"))
             {
-                String result = line;
-                Log.i("onpost", result);
-                String location[] = line.split(";");
-
-                if(Objects.equals(location[3], "0"))
-                {
-                    //double currentLatitude = Double.parseDouble(location[1]);
-                    //double currentLongitude = Double.parseDouble(location[2]);
-
-                    //Log.i("testconnectmain", currentLatitude + " | " + currentLongitude);
-
-                    /*LatLng latLng = new LatLng(currentLatitude, currentLongitude);
-
-                    MarkerOptions options = new MarkerOptions()
-                            .position(latLng)
-                            .title(location[0])
-                            .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_BLUE));*/
-                }
-                else
-                {
-                    Toast.makeText(MainActivity.this, "User has turned off their location.", Toast.LENGTH_LONG).show();
-                    Log.i("testconnect", "User location not retrieved; they are incognito");
-                }
+                Log.i("onPost", "error receiving data from background");
             }
         }
     }

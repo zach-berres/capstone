@@ -80,7 +80,7 @@ public class MapFragment extends Fragment implements OnMapReadyCallback {
                 .title("My Location");
         map.addMarker(option);
         map.moveCamera(CameraUpdateFactory.newLatLng(myloc));
-        map.animateCamera(CameraUpdateFactory.zoomTo((15)));
+        map.animateCamera(CameraUpdateFactory.zoomTo((11)));
         splitUserData(userCoords);
 
     }
@@ -106,6 +106,11 @@ public class MapFragment extends Fragment implements OnMapReadyCallback {
                             .title(user[0])
                             .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_BLUE));
                 map.addMarker(options);
+            }
+            else
+            {
+                //Toast.makeText(getActivity(),"User is Incognito!",Toast.LENGTH_LONG).show();
+                Log.i("ncog", "User " + user[0] + " is incognito!");
             }
             i++;
         }
