@@ -105,7 +105,7 @@ public class MainActivity extends AppCompatActivity
         //Moved this to a separate function, keep things neat and tidy in here
         GooglePlayServiceBuilder();
         new receiveData().execute(URL_TEST);
-        username = "berrzg";
+        username = "berrzg"; ///////////////////////Change this to be dynamic////////////////////
     }
 
     @Override
