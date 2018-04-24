@@ -62,6 +62,7 @@ public class MainActivity extends AppCompatActivity
     private String coords[] = new String[10];
     private String username;
     private int incognito = 0;
+    private int count = 0;//for the toast in location changed
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -144,12 +145,13 @@ public class MainActivity extends AppCompatActivity
 
     //Everytime we exceed the minimum threshold for distance travelled, our function will be called
     public void onLocationChanged(Location location) {
-        Toast.makeText(this, "Location Updated", Toast.LENGTH_SHORT).show();
+        //Toast.makeText(this, "Location Updated "+count++, Toast.LENGTH_SHORT).show();
         float accuracy = location.getAccuracy();
-        Log.i("location_changed", "accuracy " + accuracy);
+        //Log.i("location_changed", "accuracy " + accuracy);
         mylat = location.getLatitude();
         mylng = location.getLongitude();
         coords[0] = username + ";" + String.valueOf(mylat) + ";" + String.valueOf(mylng) + ";" + incognito;
+        Log.i("location_changed", mylat + "," + mylng);
         Log.i("location_changed", coords[0]);
         //Log.i("location_changed", "latitude = " + mylat + "; longitude = " + mylng);
         new sendData().execute(Double.toString(mylat), Double.toString(mylng), username, String.valueOf(incognito));
@@ -165,16 +167,16 @@ public class MainActivity extends AppCompatActivity
         gac = gpsbldr.build();
     }
 
+    //old method, used strings instead of string array
     public void makeBundle() {
         Bundle mycoordsbundle = new Bundle();
-        //use stringArray
         mycoordsbundle.putString("mylat", String.valueOf(mylat));
         mycoordsbundle.putString("mylng", String.valueOf(mylng));
         MapFragment mapFragment = new MapFragment();
         mapFragment.setArguments(mycoordsbundle);
         FragmentManager manager = getSupportFragmentManager();
         manager.beginTransaction().replace(R.id.mainLayout, mapFragment).commit();
-    }//old method, used strings instead of string array
+    }
 
     public void makeBundle2()
     {
@@ -244,9 +246,9 @@ public class MainActivity extends AppCompatActivity
         Log.i("gps", "connected");
         FusedLocationProviderApi flpa = LocationServices.FusedLocationApi;
         LocationRequest request = new LocationRequest();
-        //request.setInterval(30000); //30 seconds, arbitrarily chosen but should allow for significant distance travelled between requests.
+        request.setInterval(5000); //5 seconds, arbitrarily chosen but should allow for significant distance travelled between requests.
         request.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY); //highest available accuracy
-        request.setSmallestDisplacement(2);//2 meters for testing, minimum distance travelled before checking update, even if more than 30 seconds
+        //request.setSmallestDisplacement(2);//2 meters for testing, minimum distance travelled before checking update, even if more than 30 seconds
 
         //again, request and obtain permission if not first had
         if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION)
@@ -255,7 +257,6 @@ public class MainActivity extends AppCompatActivity
             ActivityCompat.requestPermissions(this,
                     new String[]{Manifest.permission.ACCESS_FINE_LOCATION},
                     MY_PERMISSIONS_REQUEST_ACCESS_FINE_LOCATION);
-
         }
         if (gac.isConnected())//in case connection was lost when app was in background
             flpa.requestLocationUpdates(gac, request, this);
@@ -349,7 +350,6 @@ public class MainActivity extends AppCompatActivity
         @Override
         protected String doInBackground(String... params) {
             HttpURLConnection connection = null;
-            //String php = URL_UPDATE_LOCATIONS + "?lat="+params[0]+"&lng="+params[1];
             String php = "http://compsci02.snc.edu/cs460/2018/berrzg/project_files/update_locations.php?lat="+params[0]+"&lng="+params[1]+"&userid="+params[2]+"&ncog="+params[3];
             Log.i("testSend", php);
             try{

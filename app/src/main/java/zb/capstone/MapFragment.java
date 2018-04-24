@@ -91,7 +91,7 @@ public class MapFragment extends Fragment implements OnMapReadyCallback {
                 double currentLatitude = Double.parseDouble(user[1]);
                 double currentLongitude = Double.parseDouble(user[2]);
 
-                Log.i("testconnectfrag", currentLatitude + " | " + currentLongitude);
+                Log.i("testconnectfrag", user[0] + " | " + currentLatitude + " | " + currentLongitude);
 
                     LatLng latLng = new LatLng(currentLatitude, currentLongitude);
 
