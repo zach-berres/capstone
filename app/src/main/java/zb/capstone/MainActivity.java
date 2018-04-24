@@ -27,7 +27,6 @@ import android.view.MenuItem;
 import android.widget.Switch;
 import android.widget.Toast;
 
-import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.location.LocationServices;
@@ -35,15 +34,11 @@ import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.FusedLocationProviderApi;
 import com.google.android.gms.location.LocationListener;
 import com.google.android.gms.location.LocationRequest;
-import com.google.android.gms.maps.model.BitmapDescriptorFactory;
-import com.google.android.gms.maps.model.LatLng;
-import com.google.android.gms.maps.model.MarkerOptions;
 
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.lang.reflect.Array;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.ProtocolException;
@@ -61,11 +56,9 @@ public class MainActivity extends AppCompatActivity
     private String URL_TEST = "http://compsci02.snc.edu/cs460/2018/berrzg/project_files/test.txt";
     private String URL_G = "https://www.google.com";
     private GoogleApiClient gac;//this is our api client
-    private Location myloc;
     private FusedLocationProviderClient gpsflc;
     private double mylat;
     private double mylng;
-    private Account myaccount;
     private String coords[] = new String[10];
     private String username;
     private int incognito = 0;
@@ -151,6 +144,7 @@ public class MainActivity extends AppCompatActivity
 
     //Everytime we exceed the minimum threshold for distance travelled, our function will be called
     public void onLocationChanged(Location location) {
+        Toast.makeText(this, "Location Updated", Toast.LENGTH_SHORT).show();
         float accuracy = location.getAccuracy();
         Log.i("location_changed", "accuracy " + accuracy);
         mylat = location.getLatitude();

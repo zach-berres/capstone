@@ -39,10 +39,8 @@ public class MapFragment extends Fragment implements OnMapReadyCallback {
     String fromMainLng;
     String userCoords[] = new String[10]; //do I need to define a size here or can i initialize as just userCoords[]?
     private String URL_TEST = "http://compsci02.snc.edu/cs460/2018/berrzg/project_files/test.txt";
-    //private Callbacks zCallbacks;
 
     public MapFragment() {
-        //Log.i("zach", "in public constructor");
         // Required empty public constructor
     }
 
@@ -68,10 +66,7 @@ public class MapFragment extends Fragment implements OnMapReadyCallback {
 
     @Override
     public void onMapReady(GoogleMap googleMap) {
-        //Log.i("zach", "map ready");
         map = googleMap;
-
-        //LatLng depere = new LatLng(44.444117, -88.066470);
         Log.i("gps", "newlatitude = " + fromMainLat + "; newlongitude = " + fromMainLng );
 
         LatLng myloc = new LatLng(Double.parseDouble(fromMainLat), Double.parseDouble(fromMainLng));
@@ -80,7 +75,6 @@ public class MapFragment extends Fragment implements OnMapReadyCallback {
                 .title(userCoords[0]);
         map.addMarker(option);
         map.moveCamera(CameraUpdateFactory.newLatLngZoom(myloc, 16));
-        //map.animateCamera(CameraUpdateFactory.zoomTo((11)));
         splitUserData(userCoords);
 
     }
