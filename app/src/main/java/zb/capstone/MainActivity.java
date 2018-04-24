@@ -158,8 +158,8 @@ public class MainActivity extends AppCompatActivity
         coords[0] = username + ";" + String.valueOf(mylat) + ";" + String.valueOf(mylng) + ";" + incognito;
         Log.i("location_changed", coords[0]);
         //Log.i("location_changed", "latitude = " + mylat + "; longitude = " + mylng);
+        new sendData().execute(Double.toString(mylat), Double.toString(mylng), username, String.valueOf(incognito));
         makeBundle2();
-        new sendData().execute(Double.toString(mylat), Double.toString(mylng), username, "0");
     }
 
     protected void GooglePlayServiceBuilder() {
