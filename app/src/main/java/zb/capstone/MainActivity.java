@@ -88,7 +88,7 @@ public class MainActivity extends AppCompatActivity
             public void onClick(View view)
             {
                 onConnected(Bundle.EMPTY);
-                new sendData().execute(Double.toString(mylat), Double.toString(mylng), username, "0");
+                new sendData().execute(Double.toString(mylat), Double.toString(mylng), username, String.valueOf(incognito));
                 new receiveData().execute(URL_TEST);
             }
         });
@@ -405,12 +405,9 @@ public class MainActivity extends AppCompatActivity
                     ca[i] = temp;
                     return;
                 }
-                else//user not in array
-                {
-                    Log.i("sortarray", "User not found in array");
-                    return;
-                }
             }
+            Log.i("sortarray", "User not found in array");
+            return;
         }
     }
 
