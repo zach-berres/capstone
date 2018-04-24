@@ -179,12 +179,11 @@ public class MainActivity extends AppCompatActivity
         mapFragment.setArguments(mycoordsbundle);
         FragmentManager manager = getSupportFragmentManager();
         manager.beginTransaction().replace(R.id.mainLayout, mapFragment).commit();
-    }
+    }//old method, used strings instead of string array
 
     public void makeBundle2()
     {
         Bundle sab = new Bundle();
-        //coords[0] = "berrzg;44.4455376;-88.0664596;0";
         sab.putStringArray("coords", coords);
         MapFragment mapFragment = new MapFragment();
         mapFragment.setArguments(sab);
@@ -311,8 +310,7 @@ public class MainActivity extends AppCompatActivity
                 InputStream is = connection.getInputStream();
                 br = new BufferedReader(new InputStreamReader(is));
 
-                sortArray(coords);//this will ensure that local user is in coords[0], switching with whomever is there, eliminating duplicates
-                int i = 1;
+                int i = 0;
                 String line = "";
                 while((line = br.readLine()) != null)
                 {
@@ -320,6 +318,7 @@ public class MainActivity extends AppCompatActivity
                     Log.i("friends", coords[i]);
                     i++;
                 }
+                sortArray(coords);//this will ensure that local user is in coords[0], switching with whomever is there, eliminating duplicates
                 return line;
 
             } catch (MalformedURLException e) {
