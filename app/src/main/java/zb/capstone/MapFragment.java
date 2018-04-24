@@ -77,7 +77,7 @@ public class MapFragment extends Fragment implements OnMapReadyCallback {
         LatLng myloc = new LatLng(Double.parseDouble(fromMainLat), Double.parseDouble(fromMainLng));
         MarkerOptions option = new MarkerOptions()
                 .position(myloc)
-                .title("My Location");
+                .title(userCoords[0]);
         map.addMarker(option);
         map.moveCamera(CameraUpdateFactory.newLatLngZoom(myloc, 16));
         //map.animateCamera(CameraUpdateFactory.zoomTo((11)));
@@ -89,7 +89,7 @@ public class MapFragment extends Fragment implements OnMapReadyCallback {
     {
         String user[];
         int i = 1;
-        while((i < 10) && (sa[i] != null))
+        while((i < sa.length) && (sa[i] != ""))
         {
             user = sa[i].split(";");
             if(Objects.equals(user[3], "0"))//they are NOT incognito

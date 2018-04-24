@@ -88,7 +88,8 @@ public class MainActivity extends AppCompatActivity
             public void onClick(View view)
             {
                 onConnected(Bundle.EMPTY);
-                new sendData().execute(Double.toString(mylat), Double.toString(mylng), "berrzg", "0");
+                new sendData().execute(Double.toString(mylat), Double.toString(mylng), username, "0");
+                new receiveData().execute(URL_TEST);
             }
         });
 
@@ -106,7 +107,7 @@ public class MainActivity extends AppCompatActivity
         GooglePlayServiceBuilder();
         initArray(coords);
         new receiveData().execute(URL_TEST);
-        username = "berrzg"; ///////////////////////Change this to be dynamic////////////////////
+        username = "ZachBerres"; ///////////////////////Change this to be dynamic////////////////////
     }
 
     @Override
@@ -158,7 +159,7 @@ public class MainActivity extends AppCompatActivity
         Log.i("location_changed", coords[0]);
         //Log.i("location_changed", "latitude = " + mylat + "; longitude = " + mylng);
         makeBundle2();
-        //new sendData().execute(Double.toString(mylat), Double.toString(mylng));
+        new sendData().execute(Double.toString(mylat), Double.toString(mylng), username, "0");
     }
 
     protected void GooglePlayServiceBuilder() {
