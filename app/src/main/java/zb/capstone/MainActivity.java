@@ -104,6 +104,7 @@ public class MainActivity extends AppCompatActivity
 
         //Moved this to a separate function, keep things neat and tidy in here
         GooglePlayServiceBuilder();
+        initArray(coords);
         new receiveData().execute(URL_TEST);
         username = "berrzg"; ///////////////////////Change this to be dynamic////////////////////
     }
@@ -310,7 +311,8 @@ public class MainActivity extends AppCompatActivity
                 InputStream is = connection.getInputStream();
                 br = new BufferedReader(new InputStreamReader(is));
 
-                int i = 1;//coords[0] is main user, so start at 1 for friends
+                sortArray(coords);//this will ensure that local user is in coords[0], switching with whomever is there, eliminating duplicates
+                int i = 1;
                 String line = "";
                 while((line = br.readLine()) != null)
                 {
@@ -380,6 +382,43 @@ public class MainActivity extends AppCompatActivity
         protected  void onPostExecute(String s)
         {
             super.onPostExecute(s);
+        }
+    }
+
+    public void sortArray(String ca[])
+    {
+        String temp = ca[0];
+        int i;
+        String user[];
+        user = ca[0].split(";");
+
+        if(Objects.equals(user[0], username))//we are already in the first slot
+            return;
+        else
+        {
+            for(i = 1; i<10; i++)
+            {
+                user = ca[i].split(";");
+                if(Objects.equals(user[0], username))
+                {
+                    ca[0] = ca[i];
+                    ca[i] = temp;
+                    return;
+                }
+                else//user not in array
+                {
+                    Log.i("sortarray", "User not found in array");
+                    return;
+                }
+            }
+        }
+    }
+
+    public void initArray(String ia[])
+    {
+        for(int i = 0; i < 10; i++)
+        {
+            ia[i] = "";
         }
     }
 }
