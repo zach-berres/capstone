@@ -62,7 +62,8 @@ public class MainActivity extends AppCompatActivity
     private String coords[] = new String[10];
     private String username;
     private int incognito = 0;
-    private int count = 0;//for the toast in location changed
+    //private int count = 0;//for the toast in location changed
+    //private boolean firstload;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -101,6 +102,7 @@ public class MainActivity extends AppCompatActivity
         GooglePlayServiceBuilder();
         initArray(coords);
         new receiveData().execute(URL_TEST);
+        //firstload = true;
         username = "ZachBerres"; ///////////////////////Change this to be dynamic////////////////////
     }
 
@@ -182,10 +184,12 @@ public class MainActivity extends AppCompatActivity
     {
         Bundle sab = new Bundle();
         sab.putStringArray("coords", coords);
+        //sab.putBoolean("snapto", firstload);
         MapFragment mapFragment = new MapFragment();
         mapFragment.setArguments(sab);
         FragmentManager manager = getSupportFragmentManager();
         manager.beginTransaction().replace(R.id.mainLayout, mapFragment).commit();
+        //firstload = false;
     }
 
     @Override
