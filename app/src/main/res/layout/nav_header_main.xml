@@ -12,22 +12,23 @@
     android:paddingTop="@dimen/activity_vertical_margin"
     android:theme="@style/ThemeOverlay.AppCompat.Dark">
 
-    <ImageView
-        android:id="@+id/imageView"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:paddingTop="@dimen/nav_header_vertical_spacing"
-        app:srcCompat="@mipmap/ic_launcher_round" />
-
     <EditText
         android:id="@+id/userName"
-        android:layout_width="match_parent"
+        android:layout_width="180dp"
         android:layout_height="wrap_content"
+        android:digits="abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ"
         android:ems="10"
-        android:inputType="textPersonName"
-        android:text="put your username here"
+        android:hint="Enter a username"
         android:imeOptions="actionDone"
-        android:digits="abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ"/>
+        android:inputType="textPersonName"
+        android:maxLength="12" />
+
+    <Button
+        android:id="@+id/btnUpdate"
+        android:layout_width="179dp"
+        android:layout_height="wrap_content"
+        android:onClick="btnOnClick"
+        android:text="Update" />
 
     <!--
     <TextView

@@ -15,7 +15,6 @@ import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.content.ContextCompat;
 import android.util.Log;
-import android.view.KeyEvent;
 import android.view.View;
 import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
@@ -25,8 +24,6 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.view.inputmethod.EditorInfo;
-import android.widget.EditText;
 import android.widget.Switch;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -102,27 +99,19 @@ public class MainActivity extends AppCompatActivity
         NavigationView navigationView = findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
 
-        /*final EditText editText = (EditText) findViewById(R.id.userName);
-        editText.setOnEditorActionListener(new TextView.OnEditorActionListener() {
-            @Override
-            public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
-                boolean handled = false;
-                if (actionId == EditorInfo.IME_ACTION_SEND) {
-                    username = editText.getText().toString();
-                    Log.i("username", editText.getText().toString());
-                    handled = true;
-                }
-                return handled;
+   /*     final Button btnUpdate = findViewById(R.id.btnUpdate);
+        btnUpdate.setOnClickListener(new View.OnClickListener(){
+            public void onClick(View v){
+                username = btnUpdate.getText().toString();
             }
         });*/
-
 
         //Moved this to a separate function, keep things neat and tidy in here
         GooglePlayServiceBuilder();
         initArray(coords);
         new receiveData().execute(URL_TEST);
         //firstload = true;
-        username = "ZachBerres"; ///////////////////////Change this to be dynamic////////////////////
+        //username = "ZachBerres"; ///////////////////////Change this to be dynamic////////////////////
     }
 
     @Override
@@ -167,7 +156,7 @@ public class MainActivity extends AppCompatActivity
     //Everytime we exceed the minimum threshold for distance travelled, our function will be called
     public void onLocationChanged(Location location) {
         //Toast.makeText(this, "Location Updated "+count++, Toast.LENGTH_SHORT).show();
-        float accuracy = location.getAccuracy();
+        //float accuracy = location.getAccuracy();
         //Log.i("location_changed", "accuracy " + accuracy);
         mylat = location.getLatitude();
         mylng = location.getLongitude();
@@ -435,5 +424,12 @@ public class MainActivity extends AppCompatActivity
         {
             ia[i] = "";
         }
+    }
+
+    public void btnOnClick(View V)
+    {
+        TextView enteredName = findViewById(R.id.userName);
+        username = enteredName.getText().toString();
+        Log.i("username", username);
     }
 }
