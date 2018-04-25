@@ -79,7 +79,7 @@ public class MapFragment extends Fragment implements OnMapReadyCallback {
                 .title(name);
         map.addMarker(option);
         //if (firstLoad) {
-            map.moveCamera(CameraUpdateFactory.newLatLngZoom(myloc, 16));
+            map.moveCamera(CameraUpdateFactory.newLatLngZoom(myloc, 18));
         //    firstLoad = false;
         //}
         splitUserData(userCoords);
