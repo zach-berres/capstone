@@ -107,10 +107,12 @@ public class MainActivity extends AppCompatActivity
                 if(on)
                 {
                     incognito = 1;
+                    showToast(incognito);
                 }
                 else
                 {
                     incognito = 0;
+                    showToast(incognito);
                 }
             }
         });
@@ -449,9 +451,11 @@ public class MainActivity extends AppCompatActivity
         Log.i("username", username);
     }
 
-    public void swOnSwitch(View v)
+    public void showToast(int incognito)
     {
-        Switch swNcog = findViewById(R.id.swNcog);
-
+        if(incognito == 1)
+            Toast.makeText(this, "You are now Incognito", Toast.LENGTH_SHORT).show();
+        else
+            Toast.makeText(this, "You are now Visible", Toast.LENGTH_SHORT).show();
     }
 }

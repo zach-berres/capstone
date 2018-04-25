@@ -38,8 +38,9 @@ public class MapFragment extends Fragment implements OnMapReadyCallback {
     String fromMainLat;
     String fromMainLng;
     String userCoords[] = new String[10]; //do I need to define a size here or can i initialize as just userCoords[]?
-    private String URL_TEST = "http://compsci02.snc.edu/cs460/2018/berrzg/project_files/test.txt";
+    //private String URL_TEST = "http://compsci02.snc.edu/cs460/2018/berrzg/project_files/test.txt";
     //private boolean firstLoad;
+    String name;
 
     public MapFragment() {
         // Required empty public constructor
@@ -59,6 +60,7 @@ public class MapFragment extends Fragment implements OnMapReadyCallback {
         Log.i("coordsfrommain", userCoords[0]);
         String user[];
         user = userCoords[0].split(";");
+        name = user[0];
         fromMainLat = user[1];
         fromMainLng = user[2];
        //firstLoad = getArguments().getBoolean("snapto");//boolean value for snapping camera to user position
@@ -74,7 +76,7 @@ public class MapFragment extends Fragment implements OnMapReadyCallback {
         LatLng myloc = new LatLng(Double.parseDouble(fromMainLat), Double.parseDouble(fromMainLng));
         MarkerOptions option = new MarkerOptions()
                 .position(myloc)
-                .title(userCoords[0]);
+                .title(name);
         map.addMarker(option);
         //if (firstLoad) {
             map.moveCamera(CameraUpdateFactory.newLatLngZoom(myloc, 16));
