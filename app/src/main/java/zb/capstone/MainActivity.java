@@ -157,6 +157,7 @@ public class MainActivity extends AppCompatActivity
         Log.i("location_changed", coords[0]);
         //Log.i("location_changed", "latitude = " + mylat + "; longitude = " + mylng);
         new sendData().execute(Double.toString(mylat), Double.toString(mylng), username, String.valueOf(incognito));
+        new receiveData().execute(URL_TEST);
         makeBundle2();
     }
 
