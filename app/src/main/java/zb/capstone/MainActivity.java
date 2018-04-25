@@ -449,6 +449,7 @@ public class MainActivity extends AppCompatActivity
         TextView enteredName = findViewById(R.id.userName);
         username = enteredName.getText().toString();
         Log.i("username", username);
+        Toast.makeText(this, "Username Updated", Toast.LENGTH_SHORT).show();
     }
 
     public void showToast(int incognito)
