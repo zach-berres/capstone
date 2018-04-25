@@ -35,8 +35,6 @@
             android:id="@+id/toggleswitch"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:textOn="Incognito On"
-            android:textOff="Incognito Off"
             android:onClick="onToggleClicked"/>
 
 </menu>

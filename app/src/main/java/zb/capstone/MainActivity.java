@@ -24,6 +24,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.CompoundButton;
 import android.widget.Switch;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -98,6 +99,21 @@ public class MainActivity extends AppCompatActivity
 
         NavigationView navigationView = findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
+
+        Switch sButton = (Switch) findViewById(R.id.swNcog);
+        sButton.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener(){
+            @Override
+            public void onCheckedChanged(CompoundButton cb, boolean on){
+                if(on)
+                {
+                    incognito = 1;
+                }
+                else
+                {
+                    incognito = 0;
+                }
+            }
+        });
 
    /*     final Button btnUpdate = findViewById(R.id.btnUpdate);
         btnUpdate.setOnClickListener(new View.OnClickListener(){
@@ -431,5 +447,11 @@ public class MainActivity extends AppCompatActivity
         TextView enteredName = findViewById(R.id.userName);
         username = enteredName.getText().toString();
         Log.i("username", username);
+    }
+
+    public void swOnSwitch(View v)
+    {
+        Switch swNcog = findViewById(R.id.swNcog);
+
     }
 }
