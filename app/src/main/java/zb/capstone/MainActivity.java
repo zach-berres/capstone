@@ -275,7 +275,7 @@ public class MainActivity extends AppCompatActivity
         Log.i("gps", "connected");
         FusedLocationProviderApi flpa = LocationServices.FusedLocationApi;
         LocationRequest request = new LocationRequest();
-        request.setInterval(5000); //5 seconds, arbitrarily chosen but should allow for significant distance travelled between requests.
+        request.setInterval(10000); //5 seconds, arbitrarily chosen but should allow for significant distance travelled between requests.
         request.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY); //highest available accuracy
         //request.setSmallestDisplacement(2);//2 meters for testing, minimum distance travelled before checking update, even if more than 30 seconds
 

@@ -14,16 +14,18 @@
         <android.support.v7.widget.Toolbar
             android:id="@+id/toolbar"
             android:layout_width="match_parent"
-            android:layout_height="?attr/actionBarSize"
-            android:background="?attr/colorPrimary"
+            android:layout_height="41dp"
+            android:background="@color/colorVibrant"
             app:popupTheme="@style/AppTheme.PopupOverlay" />
 
         <Switch
             android:id="@+id/swNcog"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_height="38dp"
             android:paddingLeft="260dp"
-            android:text="Incognito?     "/>
+            android:text="Incognito?     "
+            android:background="@color/colorVibrant"
+            android:textSize="16sp" />
 
     </android.support.design.widget.AppBarLayout>
 
@@ -31,11 +33,11 @@
 
     <android.support.design.widget.FloatingActionButton
         android:id="@+id/fab_locate"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_width="82dp"
+        android:layout_height="53dp"
         android:layout_gravity="bottom|end"
         android:layout_margin="@dimen/fab_margin"
-        app:srcCompat="@android:drawable/ic_menu_mylocation"
-        app:itemIconTint="@color/colorAccent"/>
+        app:itemIconTint="@color/colorAccent"
+        app:srcCompat="@android:drawable/ic_menu_mylocation" />
 
 </android.support.design.widget.CoordinatorLayout>
