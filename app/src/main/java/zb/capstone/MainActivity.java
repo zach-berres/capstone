@@ -64,8 +64,8 @@ public class MainActivity extends AppCompatActivity
     private String coords[] = new String[10];
     private String username;
     private int incognito = 0;
+    ////////////DEBUG ONLY///////////////////////////
     //private int count = 0;//for the toast in location changed
-    //private boolean firstload;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -73,12 +73,13 @@ public class MainActivity extends AppCompatActivity
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         Toolbar toolbar = findViewById(R.id.toolbar);
-        //Incognito Switch
-        Switch simpleSwitch = (Switch) findViewById(R.id.toggleswitch);
         setSupportActionBar(toolbar);
         gpsflc = LocationServices.getFusedLocationProviderClient(this);
 
         //Update Location Button
+        //Listener waits for button press,
+        // sends data to compsci02 server
+        // receives the location of other users from the server as well
         FloatingActionButton fab = findViewById(R.id.fab_locate);
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -117,19 +118,10 @@ public class MainActivity extends AppCompatActivity
             }
         });
 
-   /*     final Button btnUpdate = findViewById(R.id.btnUpdate);
-        btnUpdate.setOnClickListener(new View.OnClickListener(){
-            public void onClick(View v){
-                username = btnUpdate.getText().toString();
-            }
-        });*/
-
         //Moved this to a separate function, keep things neat and tidy in here
         GooglePlayServiceBuilder();
         initArray(coords);
         new receiveData().execute(URL_TEST);
-        //firstload = true;
-        //username = "ZachBerres"; ///////////////////////Change this to be dynamic////////////////////
     }
 
     @Override
@@ -141,7 +133,6 @@ public class MainActivity extends AppCompatActivity
         }
     }
 
-    //somehow get location updates going again
     @Override
     protected void onResume() {
         Log.i("whereami", "in on resume");
@@ -173,9 +164,12 @@ public class MainActivity extends AppCompatActivity
 
     //Everytime we exceed the minimum threshold for distance travelled, our function will be called
     public void onLocationChanged(Location location) {
+        //////////////////DEBUG Only/////////////////
         //Toast.makeText(this, "Location Updated "+count++, Toast.LENGTH_SHORT).show();
         //float accuracy = location.getAccuracy();
         //Log.i("location_changed", "accuracy " + accuracy);
+        //////////////////DEBUG ONLY/////////////////
+
         mylat = location.getLatitude();
         mylng = location.getLongitude();
         coords[0] = username + ";" + String.valueOf(mylat) + ";" + String.valueOf(mylng) + ";" + incognito;
@@ -211,12 +205,10 @@ public class MainActivity extends AppCompatActivity
     {
         Bundle sab = new Bundle();
         sab.putStringArray("coords", coords);
-        //sab.putBoolean("snapto", firstload);
         MapFragment mapFragment = new MapFragment();
         mapFragment.setArguments(sab);
         FragmentManager manager = getSupportFragmentManager();
         manager.beginTransaction().replace(R.id.mainLayout, mapFragment).commit();
-        //firstload = false;
     }
 
     @Override
@@ -275,9 +267,9 @@ public class MainActivity extends AppCompatActivity
     @Override
     public void onConnected(@Nullable Bundle bundle) {
         Log.i("gps", "connected");
-        FusedLocationProviderApi flpa = LocationServices.FusedLocationApi;
+        FusedLocationProviderApi flpa = LocationServices.FusedLocationApi;//deprecated, look into updated code
         LocationRequest request = new LocationRequest();
-        request.setInterval(10000); //5 seconds, arbitrarily chosen but should allow for significant distance travelled between requests.
+        request.setInterval(5000); //5 seconds, arbitrarily chosen but should allow for significant distance travelled between requests.
         request.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY); //highest available accuracy
         //request.setSmallestDisplacement(2);//2 meters for testing, minimum distance travelled before checking update, even if more than 30 seconds
 
